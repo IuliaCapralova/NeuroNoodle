@@ -31,7 +31,7 @@ class LogisticRegression_1():
             y_pred = self.predict(X)
             y_pred = np.array(y_pred)
             gradient_w, gradient_b = self._gradient(n_data_points, X, y, y_pred)
-            #BCE = self._compute_loss(X, y, y_pred)
+            BCE = self._compute_loss(X, y, y_pred)
 
             # Update weights
             w[1:] = w[1:] - self.alpha * gradient_w
@@ -84,16 +84,10 @@ class LogisticRegression_1():
 
         n_data_points = X.shape[0]
 
-        # Calculate sum of squared differences
-        sum = 0
+        # binary cross entropy
         epsilon = 1e-9
-        for y_j, y_j_hat in zip(y, y_pred):
-            y_j += epsilon
-            y_j_hat += epsilon
-            sum += np.dot(y_j.T, np.log(y_j_hat)) + np.dot((1 - y_j).T, np.log(1 - y_j_hat))
-
-        # Compute loss
-        loss = -1/n_data_points * sum
+        loss_terms = y * np.log(y_pred + epsilon) + (1 - y) * np.log(1 - y_pred + epsilon)
+        loss = -np.sum(loss_terms) / n_data_points
         return loss
     
     def accuracy(self, y_pred, y_truth):
