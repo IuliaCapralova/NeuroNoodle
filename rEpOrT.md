@@ -105,3 +105,41 @@ Example techniques:
 - sampling-based (expensive but good estimates) such as MC Dropout, MC DropConnect
 - so for epistemic: MC Droupout / DropConnect, ensembles, bayes by backprop, flipout
 
+
+Instead of predicting a single logit, the model predicts a Gaussian distribution over the logits and samples N times from that distribution:
+\begin{center}
+    $\hat z_{j} \sim \mathcal{N}(\mu(\vec x),\,\sigma^{2}(\vec x))\, $ for j = 1, 2, ..., N
+\end{center}
+
+Each sampled logit is passed through the softmax function. The sample mean of the softmax outputs represents the probability P(y|x):
+\begin{center}
+    $P(y | \vec x) = N^{-1} \sum_{j} softmax(\hat z_{j}),$ $j \in [1,N]$
+\end{center}
+
+The more samples there are (N), the higher the quality of approximation to the true softmax function.
+\\\\
+If we have a model uncertainty quantification method that is based on sampling or ensembles, we can establish $i \in [1, M]$ as an index for different samples/ensembles. That is the case in MC Dropout as each forward pass samples a different model (because of differences in dropout) and subsequently produces varying predictions. Aleatoric and epistemic uncertainty logits can therefore be computed as:
+\begin{itemize}
+    \item Aleatoric $\rightarrow$ uncertainty around the data, therefore it is the expected value of the per-sample variances: $\sigma^{2}_{Ale}(\textbf{x}) = \mathbb{E}_{i}[\sigma^{2}_{i}(\textbf{x})]$
+    \item Epistemic $\rightarrow$ model uncertainty can be shown by comparing sample means and determining how much the models disagree. A bigger variation among the model outputs would mean higher epistemic uncertainty. Therefore, this can be calculated as the variance of the per-sample means: $\sigma^{2}_{Epi}(\textbf{x}) = Var_{i}[\mu_{i}(\textbf{x})]$
+\end{itemize}
+Now, scalar measures of uncertainties must be determined. The logits (with the mean as the mean prediction across models) are first passed through a softmax function to obtain probabilities. Then Shannon entropy ($-\sum_{i}p_{i}\log p_{i}$) is applied to these probabilities to get a final uncertainty measure. Hence, for each data point, the probabilities and uncertainties for both classes are generated. For example, for a single datapoint x:
+Aleatoric probabilities: [0.96558136 0.03441875]
+Aleatoric uncertainties: [0.0338194  0.11596207]
+Epistemic probabilities: [0.96303153 0.03696823]
+Epistemic uncertainties: [0.03627656 0.12191]
+entropy unc should be 0.158
+
+[[0.10414623 0.02914027]
+ [0.27040833 0.12550977]
+ [0.02645471 0.09704418]
+ [0.02795117 0.1010331 ]
+
+#### CALIBRATION:
+To evaluate the quality of such uncertainty quantification, the model's calibration is examined. Good calibration means that the error or misclassification in the model's predictions is proportional to the uncertainty associated with the predictions. The quality of aleatoric and epistemic uncertainty measures can be inspected separately. For the following explanation, let us assume we are investigating only one of them.
+
+For a single datapoint, the model will output the probability vector of length 2, where each value represents the model's predicted probability of the datapoint belonging to class 0 or class 1. Depending on where the higher probability lies in the vector, the one-hot encoded prediction is determined. The \textbf{confidence} of the model's prediction can simply be the maximum probability in the vector. For example, if the model outputs the probability vector [0.56, 0.44], the predicted class is class 1 with confidence of 0.56. Another confidence measure is entropy ($-\sum_{i}p_{i}\log p_{i}$), which is exactly what the model outputs as the uncertainty measure. Low entropy means high confidence and vice versa (as the highest entropy is achieved when both probabilities are 0.5 and there is no preference for the prediction).
+
+To obtain the model's accuracy in predictions, they must be grouped by confidence levels into N bins. The model's accuracy for each confidence level is simply the proportion of correct predictions in the bin corresponding to that confidence level (observed frequency of correct prediction).
+
+For perfect calibration, for each confidence level $\alpha$, confidence = accuracy. This can be shown on a reliability plot, where confidence is plotted against accuracy. The graph also shows a metric that quantifies the model's calibration, the expected calibration error (ECE). ECE sums the calibration errors in each bin (the difference in accuracy and confidence) and weighs them by the proportion of samples in the bin with respect to the total number of samples.
