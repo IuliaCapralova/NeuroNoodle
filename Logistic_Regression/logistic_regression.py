@@ -1,7 +1,7 @@
 import numpy as np
 
 
-class LogisticRegression_1():
+class LogisticRegression():
     def __init__(self, n_iter: int, alpha: float, weights: np.ndarray=np.ones((1, 1)),
                  intercept: float=0.0):
 
@@ -18,8 +18,6 @@ class LogisticRegression_1():
         n_data_points = X.shape[0]
 
         # initialize weights
-        # Question!! i'm not sure with what exactly we have to initialize them,
-        # so i decided to use zeros, what do u think?
         w = self._init_weights(n_features, "zeros")
 
         for i in range(self.n_iter):

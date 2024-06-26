@@ -1,7 +1,5 @@
-from logistic_regression import LogisticRegression_1
-from sklearn.linear_model import LogisticRegression
+from logistic_regression import LogisticRegression
 from standard_scaler import StandardScaler
-import numpy as np
 import os
 import pandas as pd
 
@@ -29,18 +27,11 @@ def main():
     alpha = 0.02
 
     # results of our model
-    model = LogisticRegression_1(n_iter, alpha)
+    model = LogisticRegression(n_iter, alpha)
     model.train(X, y)
     y_pred = model.predict(X)
     accuracy = model.accuracy(y_pred, y)
-    print("Our model:", accuracy)
-
-    # sklearn's results
-    sklearn_model = LogisticRegression(max_iter=n_iter, solver='lbfgs')
-    sklearn_model.fit(X, y)
-    sklearn_y_pred = sklearn_model.predict(X)
-    sklearn_accuracy = np.mean(sklearn_y_pred == y)
-    print(f"Sklearn accuracy: {sklearn_accuracy}")
+    print("Model accuracy:", accuracy)
 
 
 if __name__ == "__main__":
