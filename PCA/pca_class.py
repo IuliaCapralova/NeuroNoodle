@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from sklearn.preprocessing import MinMaxScaler
 
 
 class PCA_1:
@@ -15,7 +16,6 @@ class PCA_1:
         sd = np.std(X, axis=0, ddof=1)   # find sd of each feature
         # data centering
         X = X - mean
-        X = X / sd
         return X
 
     def _train(self, X: np.array):

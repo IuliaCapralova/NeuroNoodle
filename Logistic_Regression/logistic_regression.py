@@ -25,7 +25,7 @@ class LogisticRegression():
             self.intercept = w[0]
             self.weights = w[1:]
 
-            # Calculate predictions, gradient and loss and BCE (problems with this haha (for now))
+            # Calculate predictions, gradient, loss, and BCE
             y_pred = self.predict(X)
             y_pred = np.array(y_pred)
             gradient_w, gradient_b = self._gradient(n_data_points, X, y, y_pred)
