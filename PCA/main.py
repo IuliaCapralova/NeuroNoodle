@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 from pca_class import PCA_1
+from sklearn.decomposition import PCA
 from sklearn.preprocessing import MinMaxScaler
 import os
 import warnings
@@ -44,8 +45,8 @@ def main():
     num_components = np.argmax(cumulative_variance >= 0.98) + 1
     print("num_components: ", num_components)
 
-    pca_custom = PCA_1(k=num_components, plot=False)
-    X_pca_custom = pca_custom.train_project(X)
+    pca_custom = PCA_1(k=13, plot=False)
+    X_pca_custom = pca_custom.train_project(X_scaled)
     print("shape: ", X_pca_custom.shape)
     print("Reduced dataset:\n", X_pca_custom)
 
