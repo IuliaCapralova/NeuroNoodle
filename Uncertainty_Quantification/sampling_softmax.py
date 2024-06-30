@@ -13,7 +13,7 @@ class SamplingSoftmax(Layer):
     (logit mean and logit variance), from which num_softmax_samples logits are
     sampled. Softmax is applied to each, and averaged into a probability output.
     '''
-    def __init__(self, num_softmax_samples=100):
+    def __init__(self, num_softmax_samples=200):
         self.num_softmax_samples = num_softmax_samples
         super().__init__()
 

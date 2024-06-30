@@ -64,7 +64,7 @@ def reliability_plot(conf_ranges, bin_accs, ece):
     '''
     plt.figure(figsize=(8, 8))
     plt.plot([0, 1], [0, 1], linestyle='--', label='Perfect Calibration')
-    plt.hist(conf_ranges[:-1], bins=conf_ranges, weights=bin_accs, edgecolor='black')
+    plt.hist(conf_ranges[:-1], bins=conf_ranges, weights=bin_accs, edgecolor='black', color='darkred')
     plt.xlabel('Confidence')
     plt.ylabel('Accuracy')
     plt.title(f'Reliability Plot (ECE={ece})')
